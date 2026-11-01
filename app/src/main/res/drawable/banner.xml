@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 320x180 TV banner: dark tile with a flame mark. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path android:fillColor="#FF1B1E25" android:pathData="M0,0h320v180h-320z" />
+    <path android:fillColor="#FFFF6A2B"
+        android:pathData="M160,30C172,58 200,72 200,108C200,132 182,150 160,150C138,150 120,132 120,108C120,88 132,76 140,62C142,78 148,86 156,90C152,70 152,50 160,30Z" />
+    <path android:fillColor="#FFFFC247"
+        android:pathData="M160,92C168,106 180,112 180,126C180,138 171,146 160,146C149,146 140,138 140,126C140,116 148,110 152,102C154,110 157,114 162,116C159,108 158,100 160,92Z" />
+</vector>
