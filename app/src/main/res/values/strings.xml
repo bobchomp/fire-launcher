@@ -4,8 +4,9 @@
     <string name="a11y_label">Fire Launcher Home button</string>
     <string name="a11y_description">Brings Fire Launcher to the front when you press the Home button. It only watches for the Home key and for the stock home screen opening; it does not read screen content.</string>
     <string name="settings">Settings</string>
-    <string name="enable_home">Enable Home button</string>
-    <string name="home_off_hint">Home button redirect is off. Turn on \"%1$s\" in Accessibility settings, or run scripts/deploy.sh from your computer.</string>
+    <string name="home_off_hint">Home button redirect is off. Run scripts/deploy.sh from your computer to turn it on.</string>
+    <string name="watcher_channel">Home button redirect</string>
+    <string name="watcher_running">Watching for the Home button</string>
     <string name="no_apps">No apps found</string>
     <string name="launch_failed">Couldn\'t open %1$s</string>
     <string name="settings_unavailable">Settings screen isn\'t available on this device</string>

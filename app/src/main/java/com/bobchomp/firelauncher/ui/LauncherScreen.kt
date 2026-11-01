@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -26,7 +25,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.tv.material3.Button
 import androidx.tv.material3.OutlinedButton
 import androidx.tv.material3.Text
 import com.bobchomp.firelauncher.AppArtLoader
@@ -43,10 +41,9 @@ fun LauncherScreen(
     apps: List<LauncherApp>?,
     artLoader: AppArtLoader,
     homePresses: Int,
-    homeServiceEnabled: Boolean,
+    homeRedirectOn: Boolean,
     onLaunch: (LauncherApp) -> Unit,
     onOpenSettings: () -> Unit,
-    onEnableHomeService: () -> Unit,
 ) {
     Column(
         Modifier
@@ -61,16 +58,12 @@ fun LauncherScreen(
         ) {
             Clock()
             Spacer(Modifier.weight(1f))
-            if (!homeServiceEnabled) {
-                Button(onClick = onEnableHomeService) { Text(stringResource(R.string.enable_home)) }
-                Spacer(Modifier.width(12.dp))
-            }
             OutlinedButton(onClick = onOpenSettings) { Text(stringResource(R.string.settings)) }
         }
 
-        if (!homeServiceEnabled) {
+        if (!homeRedirectOn) {
             Text(
-                text = stringResource(R.string.home_off_hint, stringResource(R.string.a11y_label)),
+                text = stringResource(R.string.home_off_hint),
                 fontSize = 14.sp,
                 color = TextSecondary,
                 modifier = Modifier.padding(horizontal = FocusRoom).padding(top = 8.dp),

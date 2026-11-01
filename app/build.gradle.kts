@@ -13,8 +13,8 @@ android {
         applicationId = "com.bobchomp.firelauncher"
         minSdk = 25 // Fire OS 6 (Android 7.1)
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     buildTypes {

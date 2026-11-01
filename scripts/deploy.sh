@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs Fire Launcher on a Fire TV over adb and turns on its Home-button service.
+# Installs Fire Launcher on a Fire TV over adb and sets up the Home-button redirect.
 #
 #   scripts/deploy.sh 192.168.1.50          # network adb (port 5555 by default)
 #   scripts/deploy.sh                       # already-connected / USB device
@@ -45,7 +45,19 @@ fi
 echo "== Installing $apk"
 "$adb" install -r "$apk"
 
-echo "== Enabling the Home-button accessibility service"
+echo "== Granting log access (used to spot the Home button)"
+if "$adb" shell pm grant "$PKG" android.permission.READ_LOGS; then
+  if "$adb" shell dumpsys package "$PKG" | grep -q "android.permission.READ_LOGS: granted=true"; then
+    echo "   granted"
+  else
+    echo "   WARNING: the grant didn't stick; the Home button redirect won't work." >&2
+  fi
+else
+  echo "   WARNING: pm grant failed; the Home button redirect won't work." >&2
+fi
+
+# Also try the accessibility route. Fire OS 6.7.x silently wipes this setting, but
+# other builds allow it, and it hides the stock home more cleanly where it works.
 current="$("$adb" shell settings get secure enabled_accessibility_services | tr -d '\r')"
 if [[ -z "$current" || "$current" == "null" ]]; then
   services="$SERVICE"
@@ -54,8 +66,11 @@ elif [[ ":$current:" == *":$SERVICE:"* ]]; then
 else
   services="$current:$SERVICE" # keep VoiceView or anything else already on
 fi
-"$adb" shell settings put secure enabled_accessibility_services "$services"
-"$adb" shell settings put secure accessibility_enabled 1
+"$adb" shell settings put secure enabled_accessibility_services "$services" || true
+"$adb" shell settings put secure accessibility_enabled 1 || true
+
+# Restart so the app picks up the new permission.
+"$adb" shell am force-stop "$PKG"
 
 echo "== Opening Fire Launcher"
 "$adb" shell am start -n "$PKG/.MainActivity" >/dev/null

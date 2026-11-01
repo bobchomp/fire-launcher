@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
     private var apps by mutableStateOf<List<LauncherApp>?>(null)
     private var homePresses by mutableIntStateOf(0)
-    private var homeServiceEnabled by mutableStateOf(true)
+    private var homeRedirectOn by mutableStateOf(true)
     private var loadJob: Job? = null
 
     private val packageReceiver = object : BroadcastReceiver() {
@@ -51,10 +51,9 @@ class MainActivity : ComponentActivity() {
                     apps = apps,
                     artLoader = artLoader,
                     homePresses = homePresses,
-                    homeServiceEnabled = homeServiceEnabled,
+                    homeRedirectOn = homeRedirectOn,
                     onLaunch = ::launch,
                     onOpenSettings = ::openSettings,
-                    onEnableHomeService = ::openAccessibilitySettings,
                 )
             }
         }
@@ -68,11 +67,12 @@ class MainActivity : ComponentActivity() {
         }
         ContextCompat.registerReceiver(this, packageReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         reloadApps()
+        HomeWatcherService.start(this)
     }
 
     override fun onResume() {
         super.onResume()
-        homeServiceEnabled = HomeButtonService.isEnabled(this)
+        homeRedirectOn = HomeWatcherService.canReadLogs(this) || HomeButtonService.isEnabled(this)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -104,13 +104,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun openSettings() = startOrToast(Intent(Settings.ACTION_SETTINGS))
-
-    private fun openAccessibilitySettings() = startOrToast(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-
-    private fun startOrToast(intent: Intent) {
+    private fun openSettings() {
         try {
-            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            startActivity(Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         } catch (e: Exception) {
             Toast.makeText(this, R.string.settings_unavailable, Toast.LENGTH_SHORT).show()
         }
