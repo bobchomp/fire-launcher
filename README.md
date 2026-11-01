@@ -44,7 +44,7 @@ containing `sdk.dir=/path/to/Android/Sdk`.
 ./gradlew assembleRelease
 ```
 
-The APK is written to `app/build/outputs/apk/release/app-release.apk`. Use the
+The APK is written to `app/build/outputs/apk/release/fire-launcher-<version>-release.apk`. Use the
 release build on the stick: R8 makes it about 10x smaller and noticeably faster than
 the debug build. It is signed with your local debug key, which is fine for
 sideloading. Set up a real signing config before you distribute it.
@@ -69,7 +69,7 @@ redirect needs, and opens the launcher. The first time, the TV asks you to allow
 debugging: choose **OK** and run the script again if it stopped.
 
 On Windows, run it from **Git Bash** (comes with Git for Windows):
-`bash scripts/deploy.sh 192.168.1.50 ~/Downloads/app-release.apk`.
+`bash scripts/deploy.sh 192.168.1.50 ~/Downloads/fire-launcher-1.1-release.apk`.
 
 ### Setting up the Home redirect by hand
 

@@ -5,6 +5,15 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// Bump both together for each release. The version also goes into the APK file name,
+// e.g. fire-launcher-1.1-release.apk.
+val appVersionCode = 2
+val appVersionName = "1.1"
+
+base {
+    archivesName.set("fire-launcher-$appVersionName")
+}
+
 android {
     namespace = "com.bobchomp.firelauncher"
     compileSdk = 37
@@ -13,8 +22,8 @@ android {
         applicationId = "com.bobchomp.firelauncher"
         minSdk = 25 // Fire OS 6 (Android 7.1)
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = appVersionCode
+        versionName = appVersionName
     }
 
     buildTypes {

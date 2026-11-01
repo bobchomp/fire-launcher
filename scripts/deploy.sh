@@ -3,7 +3,7 @@
 #
 #   scripts/deploy.sh 192.168.1.50          # network adb (port 5555 by default)
 #   scripts/deploy.sh                       # already-connected / USB device
-#   scripts/deploy.sh 192.168.1.50 path/to/app.apk
+#   scripts/deploy.sh 192.168.1.50 path/to/fire-launcher-1.1-release.apk
 #
 # On the Fire TV first: Settings > My Fire TV > Developer options > ADB debugging ON.
 # (If Developer options is hidden, open My Fire TV > About and click the device name 7 times.)
@@ -14,7 +14,7 @@ cd "$(dirname "$0")/.."
 PKG=com.bobchomp.firelauncher
 SERVICE="$PKG/$PKG.HomeButtonService"
 target="${1:-}"
-apk="${2:-app/build/outputs/apk/release/app-release.apk}"
+apk="${2:-}"
 
 adb="$(command -v adb || true)"
 if [[ -z "$adb" ]]; then
@@ -23,10 +23,12 @@ if [[ -z "$adb" ]]; then
 fi
 [[ -n "$adb" ]] || { echo "adb not found; run scripts/check-env.sh" >&2; exit 1; }
 
-if [[ ! -f "$apk" ]]; then
+if [[ -z "$apk" ]]; then
   echo "== Building release APK"
   ./gradlew assembleRelease
+  apk="$(ls -t app/build/outputs/apk/release/*.apk | head -1)"
 fi
+[[ -f "$apk" ]] || { echo "APK not found: $apk" >&2; exit 1; }
 
 if [[ -n "$target" ]]; then
   [[ "$target" == *:* ]] || target="$target:5555"
