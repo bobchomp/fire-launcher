@@ -7,8 +7,8 @@ plugins {
 
 // Bump both together for each release. The version also goes into the APK file name,
 // e.g. fire-launcher-1.1-release.apk.
-val appVersionCode = 2
-val appVersionName = "1.1"
+val appVersionCode = 3
+val appVersionName = "1.2"
 
 base {
     archivesName.set("fire-launcher-$appVersionName")

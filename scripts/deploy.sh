@@ -3,7 +3,7 @@
 #
 #   scripts/deploy.sh 192.168.1.50          # network adb (port 5555 by default)
 #   scripts/deploy.sh                       # already-connected / USB device
-#   scripts/deploy.sh 192.168.1.50 path/to/fire-launcher-1.1-release.apk
+#   scripts/deploy.sh 192.168.1.50 path/to/fire-launcher-<version>-release.apk
 #
 # On the Fire TV first: Settings > My Fire TV > Developer options > ADB debugging ON.
 # (If Developer options is hidden, open My Fire TV > About and click the device name 7 times.)
@@ -56,6 +56,14 @@ if "$adb" shell pm grant "$PKG" android.permission.READ_LOGS; then
   fi
 else
   echo "   WARNING: pm grant failed; the Home button redirect won't work." >&2
+fi
+
+echo "== Allowing the instant cover after Home (draw over other apps)"
+if "$adb" shell appops set "$PKG" SYSTEM_ALERT_WINDOW allow \
+   && "$adb" shell appops get "$PKG" SYSTEM_ALERT_WINDOW | grep -q "allow"; then
+  echo "   allowed"
+else
+  echo "   WARNING: couldn't allow it; Amazon's home will show for ~5 s after Home." >&2
 fi
 
 # Also try the accessibility route. Fire OS 6.7.x silently wipes this setting, but

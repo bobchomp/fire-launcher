@@ -69,7 +69,7 @@ redirect needs, and opens the launcher. The first time, the TV asks you to allow
 debugging: choose **OK** and run the script again if it stopped.
 
 On Windows, run it from **Git Bash** (comes with Git for Windows):
-`bash scripts/deploy.sh 192.168.1.50 ~/Downloads/fire-launcher-1.1-release.apk`.
+`bash scripts/deploy.sh 192.168.1.50 ~/Downloads/fire-launcher-1.2-release.apk`.
 
 ### Setting up the Home redirect by hand
 
@@ -77,6 +77,10 @@ On Windows, run it from **Git Bash** (comes with Git for Windows):
 
 ```bash
 adb shell pm grant com.bobchomp.firelauncher android.permission.READ_LOGS
+```
+
+```bash
+adb shell appops set com.bobchomp.firelauncher SYSTEM_ALERT_WINDOW allow
 ```
 
 ```bash
@@ -103,6 +107,14 @@ those log lines. When the stock home activity is started (Home pressed) or resum
 (backing out of an app, boot), it brings the launcher to the front. The service
 starts with the launcher and at boot.
 
+**`LauncherOverlay` (the instant cover).** After Home is pressed, Android holds back
+activity starts from ordinary apps for about 5 seconds, so the real launcher can't
+come forward straight away. Overlay windows aren't held back. So the watcher also
+shows a full, working copy of the launcher as an overlay ("draw over other apps",
+granted by `deploy.sh`). You can use it immediately. It closes itself as soon as the
+real launcher or an app takes over. Amazon blocks the clean alternative, disabling
+its home app (`Cannot disable a protected package`).
+
 **`HomeButtonService` (accessibility, where allowed).** On Fire OS builds that allow
 third-party accessibility services, it swallows the Home key itself, so the stock
 home never shows. Fire OS 6.7.1.1 silently wipes the setting that enables it, so
@@ -115,8 +127,10 @@ Pressing Home while the launcher is already showing jumps back to the first app.
 
 ### Known limitations
 
-- **Amazon's home flashes briefly** before the launcher covers it: the log line only
+- **Amazon's home flashes briefly** before the overlay covers it: the log line only
   appears once it is already opening.
+- **Opening an app within ~5 s of pressing Home is slow to respond.** Android holds
+  that launch back too, then opens it.
 - **Needs re-running `deploy.sh` after a factory reset**, because the `READ_LOGS`
   grant goes with it. App updates keep it.
 - Where the accessibility route is active, long-pressing Home no longer opens the
@@ -135,6 +149,8 @@ app/src/main/java/com/bobchomp/firelauncher/
   HomeWatcherService.kt  Home redirect via the system log (Fire OS 6.7.x)
   HomeButtonService.kt   Home redirect via accessibility (where Fire OS allows it)
   HomeRedirect.kt        Finds the stock home and brings the launcher forward
+  LauncherOverlay.kt     Instant stand-in launcher drawn over the stock home
+  LauncherModel.kt       App list and banners shared by the activity and overlay
   BootReceiver.kt        Starts the watcher at boot
   ui/LauncherScreen.kt   Top bar + 5-column focusable grid
   ui/AppCard.kt          Banner card (tv-material Card)

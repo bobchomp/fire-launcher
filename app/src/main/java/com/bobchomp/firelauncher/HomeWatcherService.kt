@@ -86,10 +86,16 @@ class HomeWatcherService : Service() {
         // -T 1 replays the newest existing line; ignore anything older than this logcat run.
         val at = parseTime(line) ?: return
         if (at < notBefore - CLOCK_SLACK_MS) return
-        val hitsStockHome = COMPONENT.findAll(line).any { it.value in stockHome.components }
-        if (hitsStockHome) {
+        val components = COMPONENT.findAll(line).map { it.value }.filter { "/" in it && !it.startsWith("I/") }.toList()
+        if (components.any { it in stockHome.components }) {
             Log.i(TAG, "Stock home ${if (homeStart) "started" else "resumed"}; bringing launcher forward")
+            // The overlay covers the stock home at once; the activity follows when
+            // Android allows it (up to ~5 s after a Home press).
+            LauncherOverlay.show(this)
             HomeRedirect.bringLauncherToFront(this, fromHomeKey = homeStart)
+        } else if (resumed && components.isNotEmpty()) {
+            // Something else (our launcher or an app) is on screen now.
+            LauncherOverlay.hide()
         }
     }
 
